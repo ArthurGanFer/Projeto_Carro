@@ -59,6 +59,16 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public User_info getUsuario_info() {
+        return usuario_info;
+    }
+
+    public void setUsuario_info(User_info usuario_info) {
+        this.usuario_info = usuario_info;
+    }
+    
+    
+    
     @Override
     public String toString() {
         return "User{" + "id_user=" + id_user + ", user_type=" + user_type + ", username=" + username + ", password=" + password + ", usuario_info=" + usuario_info + '}';

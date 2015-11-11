@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
  */
 @MultipartConfig
 public class FrontController extends HttpServlet {
+
     private String command;
 
     /**
@@ -50,81 +51,62 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            
+
             String page = "home.jsp";
             String msg = "";
             RequestDispatcher rd;
             //---------- OPERAÇÕES DO USUÁRIO ----------
-            if(command.startsWith("user")){
+            if (command.startsWith("user")) {
                 int code = 0;
-                
-                
-                if(command.endsWith("login")){
+
+                if (command.endsWith("login")) {
                     //---------- LOGIN ----------
                     String username = request.getParameter("username");
                     String password = request.getParameter("password");
                     code = UserManager.authorize(username, password);
-       
+
                     request.getSession().setAttribute("user", UserManager.getUser());
-                    
-                } else if(command.endsWith("insert")){ 
+
+                } else if (command.endsWith("insert")) {
                     //---------- INSERT USER ----------
                     String username2 = request.getParameter("username");
                     String pwd = request.getParameter("password");
                     String pwd2 = request.getParameter("password2");
-                    String datestr = request.getParameter("birthday");
-                    
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Date birthday = null;
-                    try {
-                        birthday = formatter.parse(datestr);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(FrontController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
+
                     User user = new User();
                     user.setUsername(username2);
                     user.setPassword(pwd);
                     user.setUser_type(1);
-                    
-                    PhotoUploader pu = new PhotoUploader(request.getPart("file"), getServletContext());
-                    String path = getServletContext().getRealPath(File.separator);
-                    String path2 = "/img/"+username2;
 
-                    if(pu.upload(path+path2)){
-                        
-                        String imageName = pu.getName();
-                        code = UserManager.insert(user,pwd2);
-                        request.getSession().setAttribute("user", UserManager.getUser());
-                    }
+                    code = UserManager.insert(user, pwd2);
+                    request.getSession().setAttribute("user", UserManager.getUser());
+
                     request.getSession().invalidate();
-                    
-                } else if(command.endsWith("logout")){
+
+                } else if (command.endsWith("logout")) {
                     //---------- LOGOUT ----------
                     request.getSession().invalidate();
                     code = 10;
-                }      
-                
-                
-                
+                }
+
                 // TRATAMENTO DO CÓDIGO DA OPERAÇÃO
-                if( code == 1){
+                if (code == 1) {
                     String username = "";
                     String pwd = "";
-                    if(request.getParameter("lembrar") != null){
+                    if (request.getParameter("lembrar") != null) {
                         username = UserManager.getUser().getUsername();
                         pwd = UserManager.getUser().getPassword();
-                    } 
+                    }
                     Cookie cookie = new Cookie("name", username);
-                    cookie.setMaxAge(60*60*24*7);
+                    cookie.setMaxAge(60 * 60 * 24 * 7);
                     response.addCookie(cookie);
                     Cookie cookie2 = new Cookie("pwd", pwd);
-                    cookie2.setMaxAge(60*60*24*7);
+                    cookie2.setMaxAge(60 * 60 * 24 * 7);
                     response.addCookie(cookie2);
-                    
+
                 } else {
                     page = "error.jsp";
-                    switch(code){
+                    switch (code) {
                         case -1:
                             msg = "User not found!";
                             break;
@@ -142,20 +124,18 @@ public class FrontController extends HttpServlet {
                             break;
                         default:
                             msg = "OK";
-                            page="index.jsp";
+                            page = "index.jsp";
                             break;
                     }
-                    
+
                 }
-                
-                
+
             } // FIM DO IF PARA USUÁRIO
-            
+
             // coloca a mensagem na sessão e encaminha para a página correta
             request.getSession().setAttribute("code", msg);
             response.sendRedirect(page);
-            
-            
+
         }
     }
 

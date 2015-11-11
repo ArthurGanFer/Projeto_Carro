@@ -19,8 +19,6 @@
                 <p>Password: <input type="password" name="password" maxlength="7" required> *</p>
                 <p>Confirm Password: <input type="password" name="password2" maxlength="7" required> *</p>
                 <!-- COLOCAR AQUI OS OUTROS CAMPOS-->
-                <p><input type="date" name="birthday"/></p>
-                <p>Photo: <input type="file" name="file"/></p>
                 <p><input type="submit" value="SIGN UP"/></p>
                 <input type="hidden" name="command" value="user.insert"/>
             </fieldset>
